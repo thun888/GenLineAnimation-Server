@@ -296,27 +296,32 @@ function generateSignatureSVG(name, animate = false, animationSpeed = 1, strokeC
   return svgContent;
 }
 
-const svgCache = {}; // 简单的内存缓存
+app.get('/', (req, res) => {
+  res.redirect('https://github.com/jrenc2002/GenLineAnimation-Server');
+});
+
+// const svgCache = {}; // 简单的内存缓存
 app.get('/signature', (req, res) => {
   const name = req.query.name || 'Signature';
   const animate = req.query.animate === 'true';
   const animationSpeed = parseFloat(req.query.speed) || 1;
   const strokeColor = req.query.color || '#000000';
   
-  const cacheKey = `${name}_${animate}_${animationSpeed}_${strokeColor}`;
+  // const cacheKey = `${name}_${animate}_${animationSpeed}_${strokeColor}`;
   
-  if (svgCache[cacheKey]) {
-    res.setHeader('Cache-Control', 'public, max-age=31536000'); // 1 year
-    res.setHeader('Content-Type', 'image/svg+xml');
-    res.send(svgCache[cacheKey]);
-    return;
-  }
+  // if (svgCache[cacheKey]) {
+  //   res.setHeader('Cache-Control', 'public, max-age=31536000'); // 1 year
+  //   res.setHeader('Content-Type', 'image/svg+xml');
+  //   res.send(svgCache[cacheKey]);
+  //   return;
+  // }
   
   const svg = generateSignatureSVG(name, animate, animationSpeed, strokeColor);
   
-  svgCache[cacheKey] = svg;
+  // svgCache[cacheKey] = svg;
   
-  res.setHeader('Cache-Control', 'public, max-age=31536000'); // 1 year
+  res.setHeader('Cache-Control', 'public, max-age=31536000',); // 1 year
+  res.setHeader('Vercel-CDN-Cache-Control', 'public, max-age=31536000',); // 1 year
   res.setHeader('Content-Type', 'image/svg+xml');
   res.send(svg);
 });
